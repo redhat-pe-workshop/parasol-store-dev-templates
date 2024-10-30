@@ -83,7 +83,7 @@ spec:
           gitops_namespace: {{ rhdh_gitops_namespace }}
           gitops_project: {{ rhdh_gitops_project }}
         targetPath: {{ './parasol-store-${{parameters.branch}}-gitops' }}
-    - id: publish-gitops
+    - id: publish
       name: Publishing to Resource Repository
       action: publish:gitlab
       input:
@@ -106,7 +106,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: {{ '${{ steps.publish-gitops.output.repoContentsUrl }}' }}
+        repoContentsUrl: {{ '${{ steps.publish.output.repoContentsUrl }}' }}
         catalogInfoPath: "/catalog-info.yaml"
 
   output:
