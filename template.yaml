@@ -1,0 +1,116 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: parasol-store-dev-template
+  title: Parasol Store
+  description: Creates a development sandbox deployment for the Parasol Store app
+  tags:
+    - parasol
+    - parasol-store
+spec:
+  owner: rhdh
+  type: service
+  parameters:
+    - title: Provide Information for the sandbox deployment
+      required:
+        - branch
+      properties:
+        branch:
+          title: Branch
+          type: string
+          description: Branch of the parasol-store source code repo
+    - title: Provide database information
+      required:
+        - database
+      properties:
+        database:
+          title: Database connection properties
+          type: object
+          required:
+            - namespace
+            - service
+            - name
+            - username
+            - password
+          properties:
+            namespace:
+              title: Database namespace
+              type: string
+              description: Namespace wheree the database is deployed
+              default: {{ parasol_db_namespace }}
+            service:
+              title: Database Service name
+              type: string
+              description: Name of the database service
+              default: {{ parasol_db_service }}
+            name:
+              title: Database schema name
+              type: string
+              description: Name of the database schema
+              default: {{ parasol_db_name }}
+            username:
+              title: Database user name
+              type: string
+              description: Name of the database user
+              default: {{ parasol_db_user }}
+            password:
+              title: Database user password
+              type: string
+              description: Name of the database user
+              default: {{ parasol_db_password }}
+  steps:
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: ./manifests
+        copyWithoutTemplating: []
+        values:
+          component_id: parasol-store
+          branch: {{ '${{ parameters.branch }}' }}
+          source_repository: https://{{ gitlab_host }}/{{ parasol_group }}/{{ parasol_store_manifests_repo }}.git
+          owner: {{ '${{ user.entity.metadata.name }}' }}
+          image_host: 'image-registry.openshift-image-registry.svc:5000'
+          image_organization: parasol-store-{{ '${{ parameters.branch }}' }}
+          image_name: 'parasol-store'
+          image_tag: 'latest'
+          database_namespace: {{ '${{ parameters.database.namespace }}' }}
+          database_service: {{ '${{ parameters.database.service }}' }}
+          database_name: {{ '${{ parameters.database.name }}' }}
+          database_user: {{ '${{ parameters.database.username }}' }}
+          database_password: {{ '${{ parameters.database.password }}' }}
+          namespace: parasol-store-{{ '${{ parameters.branch }}' }}
+          gitops_namespace: {{ rhdh_gitops_namespace }}
+          gitops_project: {{ rhdh_gitops_project }}
+        targetPath: {{ './parasol-store-${{parameters.branch}}-gitops' }}
+    - id: publish-gitops
+      name: Publishing to Resource Repository
+      action: publish:gitlab
+      input:
+        repoUrl: "{{ gitlab_host }}?owner={{ '${{ user.entity.metadata.name }}' }}&repo=parasol-store-{{ '${{ parameters.branch }}' }}-gitops"
+        repoVisibility: public
+        defaultBranch: main
+        title: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
+        description: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
+        sourcePath: {{ './parasol-store-${{parameters.branch}}-gitops' }}
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: parasol-store-{{ '${{ parameters.branch }}' }}-bootstrap
+        argoInstance: main
+        namespace: {{ rhdh_gitops_namespace }}
+        repoUrl: https://{{ gitlab_host }}/{{ '${{ user.entity.metadata.name }}' }}/parasol-store-{{ '${{ parameters.branch }}' }}-gitops.git
+        path: 'argocd/'
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: {{ '${{ steps.publish-gitops.output.repoContentsUrl }}' }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+  output:
+    links:
+      - title: Open Component in catalog
+        icon: catalog
+        entityRef: {{ '${{ steps.register.output.entityRef }}' }}
