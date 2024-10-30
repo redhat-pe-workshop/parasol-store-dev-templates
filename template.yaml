@@ -68,7 +68,7 @@ spec:
         values:
           component_id: parasol-store
           branch: {{ '${{ parameters.branch }}' }}
-          source_repository: https://{{ gitlab_host }}/{{ parasol_group }}/{{ parasol_store_manifests_repo }}.git
+          source_repository: https://{{ gitlab_host }}/{{ parasol_store_group }}/{{ parasol_store_manifests_repo }}.git
           owner: {{ '${{ user.entity.metadata.name }}' }}
           image_host: 'image-registry.openshift-image-registry.svc:5000'
           image_organization: parasol-store-{{ '${{ parameters.branch }}' }}
@@ -92,7 +92,7 @@ spec:
         defaultBranch: main
         title: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
         description: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
-        sourcePath: {{ './parasol-store-${{parameters.branch}}-gitops' }}
+        sourcePath: {{ './parasol-store-${{ parameters.branch }}-gitops' }}
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
