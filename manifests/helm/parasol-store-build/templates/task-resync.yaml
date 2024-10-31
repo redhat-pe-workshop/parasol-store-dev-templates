@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: resync
+spec:
+  steps:
+    - args:
+        - >-
+          oc delete deployment -n {{ .Release.Namespace }} -l
+          app.kubernetes.io/instance=parasol-store-{{ .Values.git.branch }}
+      command:
+        - /bin/bash
+        - '-c'
+      image: 'quay.io/openshift/origin-cli:latest'
+      name: resync
+      resources: {}

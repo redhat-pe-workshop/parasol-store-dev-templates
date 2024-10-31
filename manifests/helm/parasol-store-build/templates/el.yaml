@@ -1,0 +1,25 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: {{ include "parasol-store-build.name" . }}-el
+  labels:
+    {{- include "parasol-store-build.labels" . | nindent 4 }}
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - bindings:
+        - kind: TriggerBinding
+          ref: {{ include "parasol-store-build.name" . }}-push-binding
+      interceptors:
+        - params:
+            - name: filter
+              value: has(body.commits) && body.object_kind == 'push' && matches(body.ref, ".*\/{{ .Values.git.branch }}")
+            - name: overlays
+              value: null
+          ref:
+            kind: ClusterInterceptor
+            name: cel
+      name: commit-trigger
+      template:
+        ref: {{ include "parasol-store-build.name" . }}-build

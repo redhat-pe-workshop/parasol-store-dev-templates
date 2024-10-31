@@ -1,0 +1,15 @@
+git:
+  host:
+  group:
+  repo:
+  branch: 
+
+image:
+  dockerfile: ./src/main/docker/Dockerfile.jvm
+  host:
+  namespace:
+  name:
+  tag:
+
+cluster:
+  subdomain:

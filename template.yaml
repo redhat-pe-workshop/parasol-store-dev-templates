@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: parasol-store-dev-template
-  title: Parasol Store
+  title: Parasol Store Development
   description: Creates a development sandbox deployment for the Parasol Store app
   tags:
     - parasol
@@ -69,6 +69,11 @@ spec:
           component_id: parasol-store
           branch: {{ '${{ parameters.branch }}' }}
           source_repository: https://{{ gitlab_host }}/{{ parasol_store_group }}/{{ parasol_store_manifests_repo }}.git
+          source_repository_gitops: https://{{ gitlab_host }}/{{ '${{ user.entity.metadata.name }}' }}/parasol-store-{{ '${{ parameters.branch }}' }}-gitops.git
+          source_repository_app: https://{{ gitlab_host }}/{{ parasol_store_group }}/{{ parasol_store_repo }}.git
+          gitlab_host: {{ gitlab_host }}
+          gitlab_group: {{ parasol_store_group }}
+          gitlab_repo: {{ parasol_store_repo }}
           owner: {{ '${{ user.entity.metadata.name }}' }}
           image_host: 'image-registry.openshift-image-registry.svc:5000'
           image_organization: parasol-store-{{ '${{ parameters.branch }}' }}
@@ -82,6 +87,7 @@ spec:
           namespace: parasol-store-{{ '${{ parameters.branch }}' }}
           gitops_namespace: {{ rhdh_gitops_namespace }}
           gitops_project: {{ rhdh_gitops_project }}
+          cluster_subdomain: {{ cluster_subdomain }}
         targetPath: {{ './parasol-store-${{parameters.branch}}-gitops' }}
     - id: publish
       name: Publishing to Resource Repository
