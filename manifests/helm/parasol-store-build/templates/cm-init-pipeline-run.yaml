@@ -16,9 +16,9 @@ data:
     spec:
       params:
         - name: source-repo
-          value: {{ .Values.git.repo }}
+          value: https://{{ .Values.gitlab.host }}/{{ .Values.gitlab.group }}/{{ .Values.gitlab.project }}.git
         - name: source-branch
-          value: {{ .Values.git.branch }}
+          value: {{ .Values.gitlab.branch }}
         - name: output-image
           value: {{ include "image.url" . }}
         - name: output-image-tag

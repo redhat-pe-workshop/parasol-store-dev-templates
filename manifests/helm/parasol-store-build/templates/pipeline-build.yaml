@@ -11,7 +11,7 @@ spec:
       type: string
     - name: source-branch
       description: source branch to build from
-      default: {{ .Values.git.branch }}
+      default: {{ .Values.gitlab.branch }}
       type: string
     - name: dockerfile
       type: string

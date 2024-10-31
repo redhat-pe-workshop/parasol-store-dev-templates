@@ -7,7 +7,7 @@ spec:
     - args:
         - >-
           oc delete deployment -n {{ .Release.Namespace }} -l
-          app.kubernetes.io/instance=parasol-store-{{ .Values.git.branch }}
+          app.kubernetes.io/instance=parasol-store-{{ .Values.gitlab.branch }}
       command:
         - /bin/bash
         - '-c'

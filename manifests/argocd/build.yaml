@@ -11,15 +11,15 @@ metadata:
 spec:
   project: ${{ values.gitops_project }}
   source:
-    repoUrl: ${{ values.source_repository_gitops }}
-    targetRevision: HEAD
+    repoURL: ${{ values.source_repository_gitops }}
+    targetRevision: main
     path: ./helm/parasol-store-build
     helm:
-      values:
-        git:
+      values: |
+        gitlab:
           host: ${{ values.gitlab_host }}
           group: ${{ values.gitlab_group }}
-          repo: ${{ values.gitlab_repo }}
+          project: ${{ values.gitlab_project }}
           branch: ${{ values.branch }}
         image:
           host: ${{ values.image_host }}

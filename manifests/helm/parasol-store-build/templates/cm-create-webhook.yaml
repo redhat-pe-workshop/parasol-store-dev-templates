@@ -8,33 +8,33 @@ data:
   playbook.yaml: |
     - hosts: localhost
       vars:
-        git_host: {{ .Values.git.host }}
-        git_project: {{ .Values.git.project }}
-        git_token: ""
-        git_branch: {{ .Values.git.branch }}
+        gitlab_host: {{ .Values.gitlab.host }}
+        gitlab_project: {{ .Values.gitlab.project }}
+        gitlab_token: ""
+        gitlab_branch: {{ .Values.gitlab.branch }}
         webhook_url: https://webhook-{{ include "parasol-store-build.name" . }}-el-{{ .Release.Namespace }}.{{ .Values.cluster.subdomain }}
         webhook_secret: ""
       tasks:
         - name: Get gitlab projects
           ansible.builtin.uri:
-            url: https://{{ "{{" }} git_host {{ "}}" }}/api/v4/projects
+            url: https://{{ "{{" }} gitlab_host {{ "}}" }}/api/v4/projects
             method: GET
             body_format: form-urlencoded
             headers:
-              PRIVATE-TOKEN: '{{ "{{" }} git_token {{ "}}" }}'
+              PRIVATE-TOKEN: '{{ "{{" }} gitlab_token {{ "}}" }}'
             validate_certs: false
             status_code: [200]
-          register: r_git_projects
+          register: r_gitlab_projects
 
         - name: set gitlab projects id
           set_fact:
-            git_project_id: '{{ "{{" }} r_git_projects.json | json_query(query) {{ "}}" }}'
+            gitlab_project_id: '{{ "{{" }} r_gitlab_projects.json | json_query(query) {{ "}}" }}'
           vars:
-            query: {{ "\"" }}[?name=='{{ "{{" }} git_project {{ "}}" }}'].id{{ "\"" }}
+            query: {{ "\"" }}[?name=='{{ "{{" }} gitlab_project {{ "}}" }}'].id{{ "\"" }}
 
-        - name: Create {{ "{{" }} git_project {{ "}}" }} web hook
+        - name: Create {{ "{{" }} gitlab_project {{ "}}" }} web hook
           ansible.builtin.uri:
-            url: https://{{ "{{" }} git_host {{ "}}" }}/api/v4/projects/{{ "{{" }} git_project_id[0] {{ "}}" }}/hooks
+            url: 'https://{{ "{{" }} gitlab_host {{ "}}" }}/api/v4/projects/{{ "{{" }} gitlab_project_id[0] {{ "}}" }}/hooks'
             method: POST
             body_format: form-urlencoded
             body:
@@ -43,8 +43,8 @@ data:
               token: '{{ "{{" }} webhook_secret {{ "}}" }}'
               enable_ssl_verification: false
               branch_filter_strategy: regex
-              push_events_branch_filter: '^({{ "{{" }} git_branch {{ "}}" }})'
+              push_events_branch_filter: '^({{ "{{" }} gitlab_branch {{ "}}" }})'
             headers:
-              PRIVATE-TOKEN: '{{ "{{" }} git_token {{ "}}" }}'
+              PRIVATE-TOKEN: '{{ "{{" }} gitlab_token {{ "}}" }}'
             validate_certs: false
             status_code: [201]

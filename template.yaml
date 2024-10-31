@@ -73,7 +73,7 @@ spec:
           source_repository_app: https://{{ gitlab_host }}/{{ parasol_store_group }}/{{ parasol_store_repo }}.git
           gitlab_host: {{ gitlab_host }}
           gitlab_group: {{ parasol_store_group }}
-          gitlab_repo: {{ parasol_store_repo }}
+          gitlab_project: {{ parasol_store_repo }}
           owner: {{ '${{ user.entity.metadata.name }}' }}
           image_host: 'image-registry.openshift-image-registry.svc:5000'
           image_organization: parasol-store-{{ '${{ parameters.branch }}' }}
