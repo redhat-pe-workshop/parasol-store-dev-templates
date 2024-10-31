@@ -5,6 +5,8 @@ metadata:
   {%- if values.description %}
   description: ${{ values.description | dump }}
   {%- endif %}
+  annotations:
+    backstage.io/source-location: url:${{ values.source_repository_app }}
 spec:
   type: service
   lifecycle: development
