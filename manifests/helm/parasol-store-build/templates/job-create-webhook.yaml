@@ -17,13 +17,13 @@ spec:
           - '-c'
           - |
             set -x
-            ansible-playbook -i localhost /scripts/playbook.yaml -e git_token=$(cat /tokens/token) -e webhook_secret=$(cat /secrets/secret)
+            ansible-playbook -i localhost /scripts/playbook.yaml -e gitlab_token=$(cat /tokens/token) -e webhook_secret=$(cat /secrets/secret)
         image: quay.io/agnosticd/ee-multicloud:latest
         volumeMounts:
           - mountPath: /scripts
             name: {{ include "parasol-store-build.name" . }}-script-vol
           - mountPath: /tokens
-            name: git-token
+            name: gitlab-token
           - mountPath: /secrets
             name: webhook-secret
       restartPolicy: Never
@@ -31,7 +31,7 @@ spec:
         - name: {{ include "parasol-store-build.name" . }}-script-vol
           configMap:
             name: {{ include "parasol-store-build.name" . }}-webhook-script
-        - name: git-token
+        - name: gitlab-token
           secret:
             secretName: {{ include "parasol-store-build.name" . }}-git-token
         - name: webhook-secret
