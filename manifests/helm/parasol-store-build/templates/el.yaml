@@ -14,7 +14,7 @@ spec:
       interceptors:
         - params:
             - name: filter
-              value: has(body.commits) && body.object_kind == 'push' && matches(body.ref, ".*\/{{ .Values.gitlab.branch }}")
+              value: has(body.commits) && body.object_kind == 'push' && matches(body.ref, ".*{{ .Values.gitlab.branch }}")
             - name: overlays
               value: null
           ref:
