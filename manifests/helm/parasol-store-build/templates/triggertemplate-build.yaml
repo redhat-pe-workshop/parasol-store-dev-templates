@@ -19,7 +19,7 @@ spec:
       metadata:
         name: {{ include "parasol-store-build.name" . }}-build-$(uid)
         labels:
-          backstage.io/kubernetes-id: {{ include "parasol-store-build.name" . }}-{{ .Values.gitlab.branch }}
+          backstage.io/kubernetes-id: {{ .Values.backstage.id }}
       spec:
         params:
           - name: source-repo

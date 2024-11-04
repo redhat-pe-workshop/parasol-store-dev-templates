@@ -16,6 +16,8 @@ spec:
     path: ./helm/parasol-store-build
     helm:
       values: |
+        backstage:
+          id: ${{ values.component_id }}-${{ values.branch }}
         gitlab:
           host: ${{ values.gitlab_host }}
           group: ${{ values.gitlab_group }}
