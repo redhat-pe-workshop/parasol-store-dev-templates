@@ -18,6 +18,8 @@ spec:
       values: |
         nameOverride: ${{ values.component_id }}
         user: ${{ values.owner }}
+        backstage:
+          id: ${{ values.component_id }}-${{ values.branch }}
         image:
           organization: ${{values.image_organization}}
           host: ${{ values.image_host }}
