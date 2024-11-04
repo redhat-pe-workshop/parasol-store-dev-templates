@@ -12,7 +12,7 @@ data:
       generateName: {{ include "parasol-store-build.name" . }}-build-
       labels:
         {{- include "parasol-store-build.labels" . | nindent 8 }}
-        backstage.io/kubernetes-id: {{ include "parasol-store-build.name" . }}
+        backstage.io/kubernetes-id: {{ include "parasol-store-build.name" . }}-{{ .Values.gitlab.branch }}
     spec:
       params:
         - name: source-repo
