@@ -2,7 +2,7 @@
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
-  name: webhook-{{ include "parasol-store-build.name" . }}-el
+  name: wh-el
   labels:
     app.kubernetes.io/managed-by: EventListener
     app.kubernetes.io/part-of: Triggers
