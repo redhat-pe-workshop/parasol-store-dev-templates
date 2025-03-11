@@ -12,7 +12,7 @@ data:
         gitlab_project: {{ .Values.gitlab.project }}
         gitlab_token: ""
         gitlab_branch: {{ .Values.gitlab.branch }}
-        webhook_url: https://webhook-{{ include "parasol-store-build.name" . }}-el-{{ .Release.Namespace }}.{{ .Values.cluster.subdomain }}
+        webhook_url: https://wh-el-{{ .Release.Namespace }}.{{ .Values.cluster.subdomain }}
         webhook_secret: ""
       tasks:
         - name: Get gitlab projects
