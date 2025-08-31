@@ -44,6 +44,6 @@ spec:
                   requests:
                     storage: 1Gi
           - name: maven-settings
-            emptydir: {}
+            emptyDir: {}
           - name: docker-config
             emptyDir: {}
