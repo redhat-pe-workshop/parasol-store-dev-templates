@@ -41,6 +41,31 @@ spec:
       workspaces:
         - name: output
           workspace: source-folder
+
+## -- RHDA --
+# uncomment the following lines to add a Dependency Analytics task
+# to the pipeline. Also uncomment the "results" section below
+# to surface the scan results in the Tekton Plugin
+    # - name: dependency-analytics
+    #   runAfter:
+    #     - git-clone
+    #   taskRef:
+    #     resolver: cluster
+    #     params:
+    #       - name: kind
+    #         value: task
+    #       - name: name
+    #         value: redhat-dependency-analytics
+    #       - name: namespace
+    #         value: {{ .Release.Namespace }}   
+    #   params:
+    #     - name: manifest-file-path
+    #       value: pom.xml
+    #   workspaces:
+    #     - name: output
+    #       workspace: source-folder
+## -- RHDA --    
+
     - name: build-source
       runAfter:
         - git-clone
@@ -96,6 +121,11 @@ spec:
             value: resync
           - name: namespace
             value: {{ .Release.Namespace }}
+## -- RHDA --  for display in vulnerabilities section
+  # results:
+  #   - name: RHDA_SCAN_OUTPUT
+  #     value: "$(tasks.dependency-analytics.results.SCAN_OUTPUT)"
+## -- RHDA --  
   workspaces:
     - name: source-folder
     - name: maven-settings
