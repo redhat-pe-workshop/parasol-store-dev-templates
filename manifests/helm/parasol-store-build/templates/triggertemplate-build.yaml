@@ -13,11 +13,15 @@ spec:
     - name: output-image
       description: reference of the image that will get created
       default: {{ include "image.url" . }}
+    - name: push-user-username
+      description: the user authorizing the push
+    - name: push-user-email
+      description: that user's email
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        name: {{ include "parasol-store-build.name" . }}-build-$(uid)
+        generateName: {{ include "parasol-store-build.name" . }}-build-
         labels:
           backstage.io/kubernetes-id: {{ .Values.backstage.id }}
       spec:
@@ -30,9 +34,19 @@ spec:
             value: $(tt.params.output-image)
           - name: component-id
             value: {{ include "parasol-store-build.name" . }}
+          - name: username
+            value: $(tt.params.push-user-username)
+          - name: email
+            value: $(tt.params.push-user-email)
         pipelineRef:
           name: {{ include "parasol-store-build.name" . }}-build
         serviceAccountName: pipeline
+        #####################################################################
+        #### Uncomment to enable a different serviceAccount for one task ####
+        # taskRunSpecs:
+        #   - pipelineTaskName: setup-gitsign-environment
+        #     taskServiceAccountName: {{ include "parasol-store-build.name" . }}-setup-sa  
+        #####################################################################
         timeout: 1h0m0s
         workspaces:
           - name: source-folder
@@ -46,4 +60,6 @@ spec:
           - name: maven-settings
             emptyDir: {}
           - name: docker-config
+            emptyDir: {}
+          - name: tas-environment
             emptyDir: {}

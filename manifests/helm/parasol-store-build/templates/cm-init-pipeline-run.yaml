@@ -9,7 +9,7 @@ data:
     apiVersion: tekton.dev/v1
     kind: PipelineRun
     metadata:
-      generateName: {{ include "parasol-store-build.name" . }}-build-
+      generateName: {{ include "parasol-store-build.name" . }}-init-build-
       labels:
         {{- include "parasol-store-build.labels" . | nindent 8 }}
         backstage.io/kubernetes-id: {{ .Values.backstage.id }}
@@ -23,6 +23,12 @@ data:
           value: {{ include "image.url" . }}
         - name: output-image-tag
           value: {{ .Values.image.tag }}
+        - name: username
+          value: 'unknown'
+        - name: email
+          value: 'unknown@acme.com'
+          ##Note: The first run, triggered by the job will not have
+          ##      commit verification, therefore not needed (and not available anyway)
       pipelineRef:
         name: {{ include "parasol-store-build.name" . }}-build
       taskRunTemplate:
@@ -41,4 +47,6 @@ data:
         - emptyDir: {}
           name: maven-settings
         - name: docker-config
+          emptyDir: {}
+        - name: tas-environment
           emptyDir: {}
