@@ -22,7 +22,43 @@ spec:
     - name: output-image-tag
       type: string
       default: {{ .Values.image.tag }}
+    - description: the user authorizing the push
+      name: username
+      type: string
+    - description: that user's email
+      name: email
+      type: string
+    
   tasks:
+    ### Uncomment for gitsign verification ###
+    ##########################################
+    # - name: setup-gitsign-environment
+    #   taskRef:
+    #     name: setup-environment
+    #   workspaces:
+    #     - name: environment
+    #       workspace: tas-environment
+
+    # - name: verify-commit
+    #   runAfter:
+    #     - setup-gitsign-environment
+    #     - git-clone
+    #   params:
+    #     - name: username
+    #       value: $(params.username)
+    #     - name: email
+    #       value: $(params.email)
+    #     - name: tas-env-vars
+    #       value: $(tasks.setup-gitsign-environment.results.tas-env-vars)
+    #   taskRef:
+    #     name: verify-commit
+    #   workspaces:
+    #     - name: environment
+    #       workspace: tas-environment
+    #     - name: source
+    #       workspace: source-folder
+    ###########################################
+
     - name: git-clone
       params:
         - name: URL
@@ -43,6 +79,8 @@ spec:
           workspace: source-folder
     - name: build-source
       runAfter:
+      ### Uncomment the verify commit task and comment the git-clone task for proper sequence order
+      #  - verify-commit
         - git-clone
       params:
         - name: GOALS
@@ -99,3 +137,4 @@ spec:
   workspaces:
     - name: source-folder
     - name: maven-settings
+    - name: tas-environment
