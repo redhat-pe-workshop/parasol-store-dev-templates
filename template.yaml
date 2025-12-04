@@ -96,8 +96,6 @@ spec:
         repoUrl: "{{ gitlab_host }}?owner={{ '${{ user.entity.metadata.name }}' }}&repo=parasol-store-{{ '${{ parameters.branch }}' }}-gitops"
         repoVisibility: public
         defaultBranch: main
-        title: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
-        description: gitops resources for parasol-store-{{ '${{ parameters.branch }}' }}
         sourcePath: {{ './parasol-store-${{ parameters.branch }}-gitops' }}
     - id: create-argocd-resources
       name: Create ArgoCD Resources
